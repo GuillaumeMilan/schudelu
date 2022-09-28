@@ -1,4 +1,4 @@
-defmodule SchudeluWeb.Controllers.Calendar do
+defmodule SchudeluWeb.Controllers.CalendarReactIonic do
   use Phoenix.LiveView
   #import Phoenix.HTML.Form
 
@@ -16,32 +16,10 @@ defmodule SchudeluWeb.Controllers.Calendar do
       socket
       |> assign(:calendar_id, calendar_id)
       |> assign(:calendar_state, nil)
-      |> assign(:debug_mode, false)
     }
   end
 
-  def handle_event("click-debug-toggle", _params, socket) do
-    {
-      :noreply,
-      socket
-      |> assign(:debug_mode, !socket.assigns.debug_mode)
-    }
-  end
-  def handle_event("event-finished-"<>id, _params, socket) do
-    Schudelu.Calendar.finish_event(socket.assigns.calendar_id, String.to_integer(id))
-    {
-      :noreply,
-      socket
-    }
-  end
-  def handle_event(message, params, socket) do
-    require Logger
-    msg = """
-    [#{inspect __MODULE__}] Unexpected message received
-    Message: #{inspect message}
-    Params: #{inspect params}
-    """
-    Logger.warn(msg)
+  def handle_event(_, _, socket) do
     {:noreply, socket}
   end
   def handle_info({:new_state, %{name: calendar_name} = new_state}, socket) do
@@ -54,5 +32,14 @@ defmodule SchudeluWeb.Controllers.Calendar do
     }
   end
 
-  defdelegate render(assigns), to: SchudeluWeb.Views.CalendarExecution
+  def render(assigns) do
+    ~L"""
+    <h1>This will become react content</h1>
+    <div
+    id="greeting"
+    phx-hook="Greeter"
+    phx-update="ignore">
+    </div>
+    """
+  end
 end

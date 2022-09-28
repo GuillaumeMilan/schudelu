@@ -118,3 +118,27 @@
   0% { opacity: 1; }
   100% { opacity: 0; }
 }
+
+.phx-toggle {
+  width: 50px;
+  height: 22px;
+  padding: 2px;
+  border-radius: 11px;
+  background-color: #443734;
+  -webkit-transition: background-color 250ms ease, padding 250ms ease;
+  transition: background-color 250ms ease, padding 250ms ease;
+  cursor: pointer;
+}
+
+.phx-toggle.on {
+  padding-left: 30px;
+  background-color: #ef5424;
+}
+
+.phx-toggle-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 11px;
+  background-color: #fdfdfd;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+}
