@@ -16,6 +16,7 @@ defmodule SchudeluWeb.Controllers.Calendar do
       socket
       |> assign(:calendar_id, calendar_id)
       |> assign(:calendar_state, nil)
+      |> assign(:debug_mode, false)
     }
   end
 

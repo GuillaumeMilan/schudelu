@@ -15,7 +15,7 @@ defmodule SchudeluWeb.Views.CalendarExecution do
     event
   end
 
-  def timeline(%{events: events}) do
+  def timeline(%{events: events}, debug_mode) do
     require Logger
     runnings = events |> Enum.map(fn {_, event} -> event end) |> Enum.filter(fn event -> match?({:started, _}, event.state) end)
     Logger.debug("Runnings: #{inspect runnings, pretty: true}")
@@ -28,12 +28,18 @@ defmodule SchudeluWeb.Views.CalendarExecution do
     draw = draw_timelines(timelines, "") |> List.wrap() |> List.flatten |> Enum.join("\n")
     #draw = ""
     assigns = %{timelines: timelines, draw: draw}
-    ~L"""
-    <pre><code><%= @draw %></code></pre>
-    <pre><code><%= inspect(@timelines, pretty: true)%></code></pre>
-    """
+    case debug_mode do
+      false ->
+        ~L"""
+        <pre><code><%= @draw %></code></pre>
+        """
+      true ->
+        ~L"""
+        <pre><code><%= inspect(@timelines, pretty: true)%></code></pre>
+        """
+    end
   end
-  def timeline(_) do
+  def timeline(_, _) do
     assigns = nil
     ~L"""
     """
@@ -51,14 +57,19 @@ defmodule SchudeluWeb.Views.CalendarExecution do
     ]
   end
 
-  def actions(%{events: _events}) do
-    assigns = nil
+  def actions(%{events: _events},debug_mode) do
+    assigns = %{}
     ~L"""
-    TODO
+    
     """
   end
-  def actions(_) do
+  def actions(_,_) do
     assigns = nil
+    ~L"""
+    """
+  end
+
+  def render_debug(assigns) do
     ~L"""
     """
   end
@@ -67,11 +78,13 @@ defmodule SchudeluWeb.Views.CalendarExecution do
     ~L"""
     <h1> Calendar: <%= @calendar_id %> </h1>
     <h2>Actions</h2>
-    <%= actions(@calendar_state) %>
+    <%= actions(@calendar_state, @debug_mode) %>
     <h2> Calendar state</h2>
-    <pre><code><%= inspect(@calendar_state, pretty: true)%></code></pre>
+    <%= if @debug_mode do %>
+      <pre><code><%= inspect(@calendar_state, pretty: true)%></code></pre
+    <% end %>
     <h2> Timeline state<h2>
-    <%= timeline(@calendar_state) %>
+    <%= timeline(@calendar_state, @debug_mode) %>
     """
   end
 end
