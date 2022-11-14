@@ -26,8 +26,35 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
+import { mount } from "./mounter";
+import { GreeterOpts } from "./greeter";
+
+let Hooks = {}
+Hooks.Greeter = {
+  mounted() {
+    console.log("THIS", this)
+    this.unmountComponent = mount(this.el.id, this.opts());
+  },
+
+  destroyed() {
+    if (!this.unmountComponent) {
+      console.error("Greeter unmountComponent not set");
+      return;
+    }
+
+    this.unmountComponent(this.el);
+  },
+
+  opts(givenCount = 0): GreeterOpts {
+    return {
+      name: "Counters",
+      count: givenCount,
+    };
+  },
+}
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks, params: {_csrf_token: csrfToken}})
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
