@@ -1,0 +1,12 @@
+FROM elixir:1.14-alpine
+
+RUN apk update
+RUN apk add --upgrade inotify-tools npm
+
+# install hex + rebar
+RUN mix local.hex --force && \
+    mix local.rebar --force
+
+WORKDIR /app/schudelu
+
+CMD ./bin/dev_start

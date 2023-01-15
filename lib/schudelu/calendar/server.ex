@@ -84,6 +84,7 @@ defmodule Schudelu.Calendar.Server do
     {:reply, state, state}
   end
   def calendar_call({:subscribe, name}, {pid, _} = _from, state) do # The caller pid is now subscribe to the calendar event message
+    _ref = Process.monitor(pid)
     {:reply, :ok, %{state|subscribed: Map.put(state.subscribed, name, pid)}}
   end
 
@@ -99,6 +100,15 @@ defmodule Schudelu.Calendar.Server do
         if state != new_state, do: to_subscribers({:stopped, new_state.name}, new_state.subscribed) #Should be called only if the calendar is deleted
         {:stop, reason, new_state}
     end
+  end
+
+  def calendar_info({:DOWN, _ref, _, pid, _reason}, state) do
+    subscribed = (
+      state.subscribed
+      |> Enum.reject(fn {_name, sub_pid} -> sub_pid == pid end)
+      |> Map.new()
+    )
+    {:noreply, %{state|subscribed: subscribed}}
   end
   def calendar_info({:event_finished, event_id}, %{events: events} = state) do
     case events do

@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  core:
+    build:
+      context: ./
+      dockerfile: Dockerfile.dev
+    environment:
+      MIX_ENV: dev
+    ports:
+      - "127.0.0.1:25000:25000"
+    volumes:
+      - ./:/app/schudelu
+    #command: [tail, -f, "/dev/null"]
+    command: [sh, -c, "bin/dev_start"]
+    networks:
+      - default
+
+  db:
+    image: "postgres:13-alpine"
+
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_DB: schudelu_core
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    restart: always
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+    ports:
+      - "127.0.0.1:25432:5432"
+
+  pgweb:
+    image: sosedoff/pgweb
+    command: pgweb --bind=0.0.0.0 --listen=5000
+    ports:
+      - "127.0.0.1:25001:5000"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/schudelu_core?sslmode=disable
+    depends_on:
+      - db
+
+
+volumes:
+  pgdata:

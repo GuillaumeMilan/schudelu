@@ -9,6 +9,7 @@ defmodule Schudelu.Application do
   def start(_type, _args) do
     children = [
       # Start the Telemetry supervisor
+      Schudelu.Repo,
       SchudeluWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: Schudelu.PubSub},

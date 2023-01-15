@@ -1,0 +1,54 @@
+<h1>Calendar: <%= @calendar.name %> </h1>
+<h2>Actions</h2>
+<span><%= live_patch "Edit", to: Routes.calendar_show_path(@socket, :edit, @calendar), class: "button" %></span>
+<br/>
+
+<table>
+  <thead>
+    <tr><th colspan="2">Actions</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+    <th>Debug mode</th>
+    <th>
+    <div
+      class={if @debug_mode, do: "phx-toggle on", else: "phx-toggle off"}
+      phx-click="click-debug-toggle"
+    ><div class="phx-toggle-dot"></div></div>
+    </th>
+    </tr>
+    <%= for %{desc: desc, action: action} <- actions(Map.get(@calendar_state, :events, %{})) do %>
+      <tr>
+        <th>
+        <%= desc %>
+        </th>
+        <th>
+        <%= action %>
+        </th>
+      </tr>
+    <%end%>
+  </tbody>
+</table>
+
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.calendar_show_path(@socket, :show, @calendar)}>
+    <.live_component
+      module={SchudeluWeb.CalendarLive.FormComponent}
+      id={@calendar.id}
+      title={@page_title}
+      action={@live_action}
+      calendar={@calendar}
+      return_to={Routes.calendar_show_path(@socket, :show, @calendar)}
+    />
+  </.modal>
+<% end %>
+
+<h2>Events</h2>
+
+
+<%= if @debug_mode do %>
+<h2> Debug mode enabled </h2>
+<pre><code><%= inspect(@calendar_state, pretty: true)%></code></pre>
+<% end %>
+
+<span><%= live_redirect "Back", to: Routes.calendar_index_path(@socket, :index) %></span>

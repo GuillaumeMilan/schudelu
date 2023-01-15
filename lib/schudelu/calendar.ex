@@ -1,6 +1,10 @@
 defmodule Schudelu.Calendar do
 
-  def create(name) do
+  def create(_name) do
+    #TODO
+  end
+
+  def start(name) do
     DynamicSupervisor.start_child(Schudelu.Calendar.Server.Sup, {Schudelu.Calendar.Server, name})
   end
 
@@ -42,5 +46,12 @@ defmodule Schudelu.Calendar do
 
   def list do
     Registry.select(Schudelu.Calendar.Registry, [{{:"$1", :_, :_}, [], [:"$1"]}])
+  end
+
+  def is_started?(id) do
+    case Registry.lookup(Schudelu.Calendar.Registry, id) do
+      [] -> false
+      [_] -> true
+    end
   end
 end

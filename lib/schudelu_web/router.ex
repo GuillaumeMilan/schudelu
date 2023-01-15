@@ -19,8 +19,23 @@ defmodule SchudeluWeb.Router do
 
     get "/", PageController, :index
 
-    live "/calendar/:calendar_id", Controllers.Calendar
-    live "/calendar-react-ionic/:calendar_id", Controllers.CalendarReactIonic
+    #live "/calendar/:calendar_id", Controllers.Calendar
+    #live "/calendar-react-ionic/:calendar_id", Controllers.CalendarReactIonic
+
+    live "/calendar", CalendarLive.Index, :index
+    live "/calendar/new", CalendarLive.Index, :new
+    live "/calendar/:id/edit", CalendarLive.Index, :edit
+
+    live "/calendar/:id", CalendarLive.Show, :show
+    live "/calendar/:id/show/edit", CalendarLive.Show, :edit
+
+
+    live "/event", EventLive.Index, :index
+    live "/event/new", EventLive.Index, :new
+    live "/event/:id/edit", EventLive.Index, :edit
+
+    live "/event/:id", EventLive.Show, :show
+    live "/event/:id/show/edit", EventLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

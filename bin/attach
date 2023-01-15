@@ -1,0 +1,2 @@
+#!/bin/sh
+iex --name attach@127.0.0.1 --cookie schudelu_dev --remsh "schudelu@127.0.0.1"
