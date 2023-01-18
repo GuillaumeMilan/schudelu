@@ -44,7 +44,24 @@
 <% end %>
 
 <h2>Events</h2>
+<.live_component
+  id={"calendar-timeline-#{@calendar.id}"}
+  module={SchudeluWeb.CalendarLive.TimelineComponent}
+  calendar={@calendar}
+  calendar_state={@calendar_state}
+  debug_mode={@debug_mode}
+/>
 
+<div class="schudelu-events-summary">
+  <%= for {id, %{state: state} = event} when state != :idle <- Map.get(@calendar_state, :events, %{}) do %>
+  <.live_component
+    id={"calendar-active-event-#{id}"}
+    module={SchudeluWeb.CalendarLive.ActiveEventComponent}
+    event={Map.put(event, :id, id)}
+    debug_mode={@debug_mode}
+  />
+  <% end %>
+</div>
 
 <%= if @debug_mode do %>
 <h2> Debug mode enabled </h2>

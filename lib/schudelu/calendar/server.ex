@@ -118,6 +118,22 @@ defmodule Schudelu.Calendar.Server do
         {:noreply, state}
     end
   end
+  def calendar_info({:event_pause, event_id}, %{events: events} = state) do
+    case events do
+      %{^event_id => event} ->
+        {:noreply, %{state|events: Map.put(events, event_id, pause_event(event_id, event))}}
+      _ ->
+        {:noreply, state}
+    end
+  end
+  def calendar_info({:event_cancel, event_id}, %{events: events} = state) do
+    case events do
+      %{^event_id => event} ->
+        {:noreply, %{state|events: Map.put(events, event_id, cancel_event(event_id, event))}}
+      _ ->
+        {:noreply, state}
+    end
+  end
 
   def process_id(name) do
     [{pid, _}] = Registry.lookup(Schudelu.Calendar.Registry, name)
@@ -173,6 +189,11 @@ defmodule Schudelu.Calendar.Server do
     Logger.debug("[#{inspect __MODULE__}] Starting event #{inspect event_id} also named: #{inspect event.event.name}")
     %{event|state: {:started, nil}}
   end
+  def start_event(event_id, event) do
+    require Logger
+    Logger.error("[#{inspect __MODULE__}] Can't start event #{inspect event_id} also named: #{inspect event.event.name}")
+    event
+  end
 
   # Handle pause on delay events
   def pause_event(event_id, %{event: %{desc: %{type: :delay, delay: _}}, state: {:started, timer_ref}} = event) do
@@ -180,6 +201,11 @@ defmodule Schudelu.Calendar.Server do
     Logger.debug("[#{inspect __MODULE__}] Pausing event #{inspect event_id} also named: #{inspect event.event.name}")
     rem_time = Process.cancel_timer(timer_ref)
     %{event|state: {:paused, rem_time}}
+  end
+  def pause_event(event_id, event) do
+    require Logger
+    Logger.error("[#{inspect __MODULE__}] Can't pause event #{inspect event_id} also named: #{inspect event.event.name}")
+    event
   end
 
   # Handle cancel on delay events
@@ -199,9 +225,19 @@ defmodule Schudelu.Calendar.Server do
     Logger.debug("[#{inspect __MODULE__}] Canceling event #{inspect event_id} also named: #{inspect event.event.name}")
     %{event|state: :idle}
   end
+  def cancel_event(event_id, event) do
+    require Logger
+    Logger.debug("[#{inspect __MODULE__}] Can't cancel event #{inspect event_id} also named: #{inspect event.event.name}")
+    event
+  end
 
 
   def terminate_event(event_id, %{event: %{desc: %{type: :delay, delay: _}}, state: {:started, _}} = event, state) do
+    require Logger
+    Logger.debug("[#{inspect __MODULE__}] Terminating event #{inspect event_id} also named: #{inspect event.event.name}")
+    do_terminate_event(event_id, event, state)
+  end
+  def terminate_event(event_id, %{event: %{desc: %{type: :delay, delay: _}}, state: {:paused, _}} = event, state) do
     require Logger
     Logger.debug("[#{inspect __MODULE__}] Terminating event #{inspect event_id} also named: #{inspect event.event.name}")
     do_terminate_event(event_id, event, state)
@@ -210,6 +246,11 @@ defmodule Schudelu.Calendar.Server do
     require Logger
     Logger.debug("[#{inspect __MODULE__}] Terminating event #{inspect event_id} also named: #{inspect event.event.name}")
     do_terminate_event(event_id, event, state)
+  end
+  def terminate_event(event_id, event, state) do
+    require Logger
+    Logger.error("[#{inspect __MODULE__}] Can't terminate event #{inspect event_id} also named: #{inspect event.event.name}")
+    state
   end
 
   def do_terminate_event(event_id, event, state) do
@@ -247,7 +288,7 @@ defmodule Schudelu.Calendar.Server do
     Logger.debug("[#{inspect __MODULE__}] Refusing editing event #{inspect event_id} also named: #{inspect event.event.name}")
     {:error, :started}
   end
-  def edit_event(event_id,  %{event: %{desc: %{type: :delay, delay: _}}, state: {:paused, _}} = event, _new_event) do 
+  def edit_event(event_id,  %{event: %{desc: %{type: :delay, delay: _}}, state: {:paused, _}} = event, _new_event) do
     require Logger
     Logger.debug("[#{inspect __MODULE__}] Refusing editing event #{inspect event_id} also named: #{inspect event.event.name}")
     {:error, :started}

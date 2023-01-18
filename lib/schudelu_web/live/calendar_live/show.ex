@@ -38,10 +38,19 @@ defmodule SchudeluWeb.CalendarLive.Show do
   end
   def handle_event("event-finished-"<>id, _params, socket) do
     Schudelu.Calendar.finish_event(socket.assigns.calendar.id, String.to_integer(id))
-    {
-      :noreply,
-      socket
-    }
+    {:noreply, socket}
+  end
+  def handle_event("event-pause-"<>id, _params, socket) do
+    Schudelu.Calendar.pause_event(socket.assigns.calendar.id, String.to_integer(id))
+    {:noreply, socket}
+  end
+  def handle_event("event-cancel-"<>id, _params, socket) do
+    Schudelu.Calendar.cancel_event(socket.assigns.calendar.id, String.to_integer(id))
+    {:noreply, socket}
+  end
+  def handle_event("event-start-"<>id, _params, socket) do
+    Schudelu.Calendar.start_events(socket.assigns.calendar.id, [String.to_integer(id)])
+    {:noreply, socket}
   end
   def handle_event(message, params, socket) do
     require Logger
@@ -55,7 +64,7 @@ defmodule SchudeluWeb.CalendarLive.Show do
   end
   def handle_info({:new_state, %{name: calendar_name} = new_state}, socket) do
     require Logger
-    Logger.debug("Socket received message from calendar #{inspect calendar_name} with new calendar state: \n#{inspect new_state, pretty: true}")
+    Logger.debug("Socket received message from calendar #{inspect calendar_name}")# with new calendar state: \n#{inspect new_state, pretty: true}")
     {
       :noreply,
       socket

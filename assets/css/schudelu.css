@@ -1,0 +1,21 @@
+
+.schudelu-events-summary {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.schudelu-event-lite {
+  padding: 2rem;
+}
+
+.schudelu-event-lite-title {
+  text-align: center;
+}
+
+.schudelu-event-lite-actions-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

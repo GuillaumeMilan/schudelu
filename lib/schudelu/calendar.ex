@@ -25,11 +25,19 @@ defmodule Schudelu.Calendar do
   end
 
   def start_events(calendar, events_ids) do
-    call(calendar, {:start_events,events_ids})
+    call(calendar, {:start_events, events_ids})
   end
 
   def finish_event(calendar, event_id) do
     do_send(calendar, {:event_finished, event_id})
+  end
+
+  def pause_event(calendar, event_id) do
+    do_send(calendar, {:event_pause, event_id})
+  end
+
+  def cancel_event(calendar, event_id) do
+    do_send(calendar, {:event_cancel, event_id})
   end
 
   def subscribe(calendar, subscribe_as) do

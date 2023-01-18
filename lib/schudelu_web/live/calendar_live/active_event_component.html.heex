@@ -1,0 +1,26 @@
+<div class="schudelu-event-lite">
+  <h5 class="schudelu-event-lite-title"><%= @event.event.name %></h5>
+  <%= if @debug_mode == true do %>
+    <pre><code><%= inspect @event %></code></pre>
+  <% end %>
+  <div class="schudelu-event-lite-actions-wrapper">
+    <%= case @event.event.desc.type do %>
+      <% :manual -> %>
+        <button phx-click={"event-finished-#{@event.id}"}>Done</button>
+        <button phx-click={"event-cancel-#{@event.id}"}>Cancel</button>
+      <% :delay -> %>
+        <%= case @event.state do %>
+          <% {:started, _} -> %>
+            <button phx-click={"event-pause-#{@event.id}"}>Pause</button>
+          <% {:paused, _} -> %>
+            <button phx-click={"event-start-#{@event.id}"}>Resume</button>
+          <% _ -> %>
+            <pre><code>Undefined state: <%= inspect @event.state %></code></pre>
+        <% end %>
+        <button phx-click={"event-finished-#{@event.id}"}>Done</button>
+        <button phx-click={"event-cancel-#{@event.id}"}>Cancel</button>
+      <% _ -> %>
+        <pre><code>Undefined type: <%= inspect @event.event.desc.type %></code></pre>
+    <% end %>
+  </div>
+</div>
