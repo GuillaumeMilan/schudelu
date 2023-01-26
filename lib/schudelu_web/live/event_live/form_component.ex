@@ -24,10 +24,12 @@ defmodule SchudeluWeb.EventLive.FormComponent do
   end
 
   def handle_event("save", %{"event" => event_params}, socket) do
+    require Logger
+    Logger.debug("PArams #{inspect event_params}")
     save_event(socket, socket.assigns.action, event_params)
   end
 
-  defp save_event(socket, :edit, event_params) do
+  defp save_event(socket, :edit_event, event_params) do
     case Tools.update_event(socket.assigns.event, event_params) do
       {:ok, _event} ->
         {:noreply,
@@ -40,8 +42,8 @@ defmodule SchudeluWeb.EventLive.FormComponent do
     end
   end
 
-  defp save_event(socket, :new, event_params) do
-    case Tools.create_event(event_params) do
+  defp save_event(socket, :add_event, event_params) do
+    case Tools.create_event(event_params |> Map.put("calendar_id", socket.assigns.event.calendar_id)) do
       {:ok, _event} ->
         {:noreply,
          socket

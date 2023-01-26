@@ -23,7 +23,7 @@ defmodule SchudeluWeb.EventLive.Index do
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Event")
-    |> assign(:event, %Event{})
+    |> assign(:event, %Event{calendar_id: socket.assign.calendar.id})
   end
 
   defp apply_action(socket, :index, _params) do

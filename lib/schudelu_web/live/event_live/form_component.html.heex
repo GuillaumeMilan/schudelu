@@ -8,11 +8,15 @@
     phx-target={@myself}
     phx-change="validate"
     phx-submit="save">
-  
+
     <%= label f, :name %>
-    <%= text_input f, :name %>
+    <%= text_input f, :name, autocomplete: false %>
     <%= error_tag f, :name %>
-  
+
+    <%= label f, :name %>
+    <%= select f, :type, ["Count down": :delay, "Manual": :manual] %>
+    <%= error_tag f, :name %>
+
     <div>
       <%= submit "Save", phx_disable_with: "Saving..." %>
     </div>

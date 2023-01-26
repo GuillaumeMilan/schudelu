@@ -113,8 +113,22 @@ defmodule Schudelu.Tools do
       [%Event{}, ...]
 
   """
-  def list_event do
+  def list_event() do
     Repo.all(Event)
+  end
+
+  @doc """
+  Returns the list of event in a calendar.
+
+  ## Examples
+
+      iex> list_event_in_calendar()
+      [%Event{}, ...]
+
+  """
+  def list_event_in_calendar(calendar_id) do
+    from(e in Event, where: e.calendar_id == ^calendar_id)
+    |> Repo.all()
   end
 
   @doc """
@@ -196,5 +210,106 @@ defmodule Schudelu.Tools do
   """
   def change_event(%Event{} = event, attrs \\ %{}) do
     Event.changeset(event, attrs)
+  end
+
+  alias Schudelu.Tools.EventVertex
+
+  @doc """
+  Returns the list of event_vertex.
+
+  ## Examples
+
+      iex> list_event_vertex()
+      [%EventVertex{}, ...]
+
+  """
+  def list_event_vertex do
+    Repo.all(EventVertex)
+  end
+
+  def list_event_vertex_referencing(event_id) do
+    from(ev in EventVertex, where: (ev.from_event_id == ^event_id) or (ev.to_event_id == ^event_id))
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a single event_vertex.
+
+  Raises `Ecto.NoResultsError` if the Event vertex does not exist.
+
+  ## Examples
+
+      iex> get_event_vertex!(123)
+      %EventVertex{}
+
+      iex> get_event_vertex!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_event_vertex!(id), do: Repo.get!(EventVertex, id)
+
+  @doc """
+  Creates a event_vertex.
+
+  ## Examples
+
+      iex> create_event_vertex(%{field: value})
+      {:ok, %EventVertex{}}
+
+      iex> create_event_vertex(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_event_vertex(attrs \\ %{}) do
+    %EventVertex{}
+    |> EventVertex.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a event_vertex.
+
+  ## Examples
+
+      iex> update_event_vertex(event_vertex, %{field: new_value})
+      {:ok, %EventVertex{}}
+
+      iex> update_event_vertex(event_vertex, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_event_vertex(%EventVertex{} = event_vertex, attrs) do
+    event_vertex
+    |> EventVertex.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a event_vertex.
+
+  ## Examples
+
+      iex> delete_event_vertex(event_vertex)
+      {:ok, %EventVertex{}}
+
+      iex> delete_event_vertex(event_vertex)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_event_vertex(%EventVertex{} = event_vertex) do
+    Repo.delete(event_vertex)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking event_vertex changes.
+
+  ## Examples
+
+      iex> change_event_vertex(event_vertex)
+      %Ecto.Changeset{data: %EventVertex{}}
+
+  """
+  def change_event_vertex(%EventVertex{} = event_vertex, attrs \\ %{}) do
+    EventVertex.changeset(event_vertex, attrs)
   end
 end

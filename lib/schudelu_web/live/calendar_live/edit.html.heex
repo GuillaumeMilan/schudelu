@@ -1,0 +1,82 @@
+<h1>Calendar <%= @calendar.name %></h1>
+
+<h2>Events</h2>
+
+<%= if @live_action in [:add_event, :edit_event] do %>
+  <.modal return_to={Routes.calendar_edit_path(@socket, :index, @calendar)}>
+    <.live_component
+      module={SchudeluWeb.EventLive.FormComponent}
+      id={@event.id || :new}
+      title={@page_title}
+      action={@live_action}
+      event={@event}
+      return_to={Routes.calendar_edit_path(@socket, :index, @calendar)}
+    />
+  </.modal>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="event">
+    <%= for {_, event} <- @events do %>
+      <tr id={"event-#{event.id}"}>
+        <td><%= event.name %></td>
+
+        <td>
+          <span><%= live_redirect "Edit", to: Routes.calendar_edit_path(@socket, :edit_event, @calendar, event) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete_event", phx_value_id: event.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<span><%= live_patch "New Event", to: Routes.calendar_edit_path(@socket, :add_event, @calendar) %></span>
+
+<hr/>
+
+
+<h2>Events Links</h2>
+
+<%= if @live_action in [:link_events] do %>
+  <.modal return_to={Routes.calendar_edit_path(@socket, :index, @calendar)}>
+    <.live_component
+      module={SchudeluWeb.EventVertexLive.FormComponent}
+      id={@event_vertex.id || :new}
+      title={@page_title}
+      action={@live_action}
+      event_vertex={@event_vertex}
+      events={@events}
+      return_to={Routes.calendar_edit_path(@socket, :index, @calendar)}
+    />
+  </.modal>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>From</th>
+      <th>To</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="event-vertex">
+    <%= for event_vertex <- @event_vertices do %>
+      <tr id={"event-vertex-#{event_vertex.id}"}>
+        <td><%= @events[event_vertex.from_event_id].name %></td>
+        <td><%= @events[event_vertex.to_event_id].name %></td>
+
+        <td>
+          <span><%= link "Delete", to: "#", phx_click: "delete_event_vertex", phx_value_id: event_vertex.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<span><%= live_patch "Link Events", to: Routes.calendar_edit_path(@socket, :link_events, @calendar) %></span>

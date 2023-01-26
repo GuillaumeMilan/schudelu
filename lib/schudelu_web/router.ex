@@ -24,18 +24,14 @@ defmodule SchudeluWeb.Router do
 
     live "/calendar", CalendarLive.Index, :index
     live "/calendar/new", CalendarLive.Index, :new
-    live "/calendar/:id/edit", CalendarLive.Index, :edit
+
+    live "/calendar/:id/edit", CalendarLive.Edit, :index
+    live "/calendar/:id/edit/add_event", CalendarLive.Edit, :add_event
+    live "/calendar/:id/edit/edit_event/:event_id", CalendarLive.Edit, :edit_event
+    live "/calendar/:id/edit/link_events", CalendarLive.Edit, :link_events
 
     live "/calendar/:id", CalendarLive.Show, :show
-    live "/calendar/:id/show/edit", CalendarLive.Show, :edit
-
-
-    live "/event", EventLive.Index, :index
-    live "/event/new", EventLive.Index, :new
-    live "/event/:id/edit", EventLive.Index, :edit
-
-    live "/event/:id", EventLive.Show, :show
-    live "/event/:id/show/edit", EventLive.Show, :edit
+    live "/calendar/:id/show/add_event", CalendarLive.Show, :add_event
   end
 
   # Other scopes may use custom stacks.

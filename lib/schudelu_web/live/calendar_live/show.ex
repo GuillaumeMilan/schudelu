@@ -10,6 +10,8 @@ defmodule SchudeluWeb.CalendarLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    require Logger
+    Logger.debug("Socket assigns: #{inspect socket.assigns}")
     calendar = Tools.get_calendar!(id)
     case Schudelu.Calendar.start(calendar.id) do
       {:ok, _pid} -> :ok
@@ -22,13 +24,17 @@ defmodule SchudeluWeb.CalendarLive.Show do
       socket
       |> assign(:page_title, page_title(socket.assigns.live_action))
       |> assign(:calendar, calendar)
-      |> assign(:calendar_state, %{})
-      |> assign(:debug_mode, false)
+      |> ensure_assign(:calendar_state, %{})
+      |> ensure_assign(:debug_mode, false)
     }
   end
 
 
   @impl true
+  def handle_event("start-calendar", _params, socket) do
+    Schudelu.Calendar.start_events(socket.calendar.id, socket.calendar_state.entry_points)
+    {:noreply, socket}
+  end
   def handle_event("click-debug-toggle", _params, socket) do
     {
       :noreply,
@@ -74,23 +80,14 @@ defmodule SchudeluWeb.CalendarLive.Show do
 
   defp page_title(:show), do: "Show Calendar"
   defp page_title(:edit), do: "Edit Calendar"
+  defp page_title(:add_event), do: "Add event to Calendar"
 
-  def actions(events) do
-    events
-    |> Enum.flat_map(fn {id, event} -> to_actions(id, event) end)
-  end
 
-  def to_actions(id, %{event: %{desc: %{type: :manual}, name: name}, state: {:started, nil}}) do
-    assigns = %{event: "event-finished-#{id}"}
-    terminate_render = ~L"""
-    <button phx-click="<%= assigns.event %>"><%= name%> done!</button>
-    """
-    [%{desc: "#{name} done!", id: id, action: terminate_render}]
-  end
-  def to_actions(_id, %{event: %{desc: %{type: :delay}}}) do
-    []
-  end
-  def to_actions(_id, _) do
-    []
+  def ensure_assign(socket, key, default_value) do
+    assign(
+      socket,
+      key,
+      Map.get(socket.assigns, key, default_value)
+    )
   end
 end

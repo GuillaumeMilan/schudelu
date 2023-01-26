@@ -1,32 +1,29 @@
 <h1>Calendar: <%= @calendar.name %> </h1>
 <h2>Actions</h2>
 <span><%= live_patch "Edit", to: Routes.calendar_show_path(@socket, :edit, @calendar), class: "button" %></span>
+<span>
+  <%= case Map.get(@calendar_state, :state, :undefined) do %>
+    <% :active -> %>
+      <button phx-click="cancel-calender">Cancel</button>
+    <% :stopped -> %>
+      <button phx-click="start-calender">Start</button>
+    <% _ -> %>
+  <% end %>
+</span>
+<span><%= live_patch "Add Event", to: Routes.calendar_show_path(@socket, :add_event, @calendar), class: "button" %></span>
 <br/>
 
 <table>
-  <thead>
-    <tr><th colspan="2">Actions</th></tr>
-  </thead>
   <tbody>
     <tr>
-    <th>Debug mode</th>
-    <th>
-    <div
-      class={if @debug_mode, do: "phx-toggle on", else: "phx-toggle off"}
-      phx-click="click-debug-toggle"
-    ><div class="phx-toggle-dot"></div></div>
-    </th>
+      <th>Debug mode</th>
+      <th>
+        <div
+          class={if @debug_mode, do: "phx-toggle on", else: "phx-toggle off"}
+          phx-click="click-debug-toggle"
+        ><div class="phx-toggle-dot"></div></div>
+      </th>
     </tr>
-    <%= for %{desc: desc, action: action} <- actions(Map.get(@calendar_state, :events, %{})) do %>
-      <tr>
-        <th>
-        <%= desc %>
-        </th>
-        <th>
-        <%= action %>
-        </th>
-      </tr>
-    <%end%>
   </tbody>
 </table>
 
@@ -34,6 +31,19 @@
   <.modal return_to={Routes.calendar_show_path(@socket, :show, @calendar)}>
     <.live_component
       module={SchudeluWeb.CalendarLive.FormComponent}
+      id={@calendar.id}
+      title={@page_title}
+      action={@live_action}
+      calendar={@calendar}
+      return_to={Routes.calendar_show_path(@socket, :show, @calendar)}
+    />
+  </.modal>
+<% end %>
+
+<%= if @live_action in [:add_event] do %>
+  <.modal return_to={Routes.calendar_show_path(@socket, :show, @calendar)}>
+    <.live_component
+      module={SchudeluWeb.CalendarLive.AddEventComponent}
       id={@calendar.id}
       title={@page_title}
       action={@live_action}

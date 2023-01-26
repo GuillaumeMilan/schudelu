@@ -28,7 +28,7 @@
 
         <td>
           <span><%= live_redirect "Show", to: Routes.calendar_show_path(@socket, :show, calendar) %></span>
-          <span><%= live_patch "Edit", to: Routes.calendar_index_path(@socket, :edit, calendar) %></span>
+          <span><%= live_redirect "Edit", to: Routes.calendar_edit_path(@socket, :index, calendar) %></span>
           <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: calendar.id, data: [confirm: "Are you sure?"] %></span>
         </td>
       </tr>

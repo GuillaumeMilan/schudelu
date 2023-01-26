@@ -31,4 +31,18 @@ defmodule Schudelu.ToolsFixtures do
 
     event
   end
+
+  @doc """
+  Generate a event_vertex.
+  """
+  def event_vertex_fixture(attrs \\ %{}) do
+    {:ok, event_vertex} =
+      attrs
+      |> Enum.into(%{
+
+      })
+      |> Schudelu.Tools.create_event_vertex()
+
+    event_vertex
+  end
 end

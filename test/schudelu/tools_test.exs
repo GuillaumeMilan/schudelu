@@ -110,4 +110,56 @@ defmodule Schudelu.ToolsTest do
       assert %Ecto.Changeset{} = Tools.change_event(event)
     end
   end
+
+  describe "event_vertex" do
+    alias Schudelu.Tools.EventVertex
+
+    import Schudelu.ToolsFixtures
+
+    @invalid_attrs %{}
+
+    test "list_event_vertex/0 returns all event_vertex" do
+      event_vertex = event_vertex_fixture()
+      assert Tools.list_event_vertex() == [event_vertex]
+    end
+
+    test "get_event_vertex!/1 returns the event_vertex with given id" do
+      event_vertex = event_vertex_fixture()
+      assert Tools.get_event_vertex!(event_vertex.id) == event_vertex
+    end
+
+    test "create_event_vertex/1 with valid data creates a event_vertex" do
+      valid_attrs = %{}
+
+      assert {:ok, %EventVertex{} = event_vertex} = Tools.create_event_vertex(valid_attrs)
+    end
+
+    test "create_event_vertex/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Tools.create_event_vertex(@invalid_attrs)
+    end
+
+    test "update_event_vertex/2 with valid data updates the event_vertex" do
+      event_vertex = event_vertex_fixture()
+      update_attrs = %{}
+
+      assert {:ok, %EventVertex{} = event_vertex} = Tools.update_event_vertex(event_vertex, update_attrs)
+    end
+
+    test "update_event_vertex/2 with invalid data returns error changeset" do
+      event_vertex = event_vertex_fixture()
+      assert {:error, %Ecto.Changeset{}} = Tools.update_event_vertex(event_vertex, @invalid_attrs)
+      assert event_vertex == Tools.get_event_vertex!(event_vertex.id)
+    end
+
+    test "delete_event_vertex/1 deletes the event_vertex" do
+      event_vertex = event_vertex_fixture()
+      assert {:ok, %EventVertex{}} = Tools.delete_event_vertex(event_vertex)
+      assert_raise Ecto.NoResultsError, fn -> Tools.get_event_vertex!(event_vertex.id) end
+    end
+
+    test "change_event_vertex/1 returns a event_vertex changeset" do
+      event_vertex = event_vertex_fixture()
+      assert %Ecto.Changeset{} = Tools.change_event_vertex(event_vertex)
+    end
+  end
 end

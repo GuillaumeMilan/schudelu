@@ -1,0 +1,37 @@
+<h1>Listing Event vertex</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <.modal return_to={Routes.event_vertex_index_path(@socket, :index)}>
+    <.live_component
+      module={SchudeluWeb.EventVertexLive.FormComponent}
+      id={@event_vertex.id || :new}
+      title={@page_title}
+      action={@live_action}
+      event_vertex={@event_vertex}
+      return_to={Routes.event_vertex_index_path(@socket, :index)}
+    />
+  </.modal>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="event_vertex">
+    <%= for event_vertex <- @event_vertex_collection do %>
+      <tr id={"event_vertex-#{event_vertex.id}"}>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.event_vertex_show_path(@socket, :show, event_vertex) %></span>
+          <span><%= live_patch "Edit", to: Routes.event_vertex_index_path(@socket, :edit, event_vertex) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: event_vertex.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Event vertex", to: Routes.event_vertex_index_path(@socket, :new) %></span>
