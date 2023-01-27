@@ -77,6 +77,16 @@ defmodule SchudeluWeb.CalendarLive.Show do
       |> assign(:calendar_state, new_state)
     }
   end
+  def handle_info({:calendar_exited, _reason,  %{name: calendar_id}}, socket) when calendar_id == socket.assigns.calendar.id do
+    {
+      :noreply,
+      socket
+      |> assign(:calendar_state, nil)
+    }
+  end
+  def handle_info({:calendar_exited, _, _}, socket) do
+    {:noreply, socket}
+  end
 
   defp page_title(:show), do: "Show Calendar"
   defp page_title(:edit), do: "Edit Calendar"

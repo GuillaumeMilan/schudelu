@@ -1,6 +1,11 @@
-<h1>Calendar: <%= @calendar.name %> </h1>
+<div class="schudelu-row schudelu-space-between">
+  <h1>Calendar: <%= @calendar.name %></h1>
+  <span><%= live_redirect "Edit", to: Routes.calendar_edit_path(@socket, :index, @calendar), class: "button" %></span>
+</div>
+
+
 <h2>Actions</h2>
-<span><%= live_patch "Edit", to: Routes.calendar_show_path(@socket, :edit, @calendar), class: "button" %></span>
+
 <span>
   <%= case Map.get(@calendar_state, :state, :undefined) do %>
     <% :active -> %>
@@ -10,7 +15,6 @@
     <% _ -> %>
   <% end %>
 </span>
-<span><%= live_patch "Add Event", to: Routes.calendar_show_path(@socket, :add_event, @calendar), class: "button" %></span>
 <br/>
 
 <table>
@@ -54,25 +58,26 @@
 <% end %>
 
 <h2>Events</h2>
-<.live_component
-  id={"calendar-timeline-#{@calendar.id}"}
-  module={SchudeluWeb.CalendarLive.TimelineComponent}
-  calendar={@calendar}
-  calendar_state={@calendar_state}
-  debug_mode={@debug_mode}
-/>
-
-<div class="schudelu-events-summary">
-  <%= for {id, %{state: state} = event} when state != :idle <- Map.get(@calendar_state, :events, %{}) do %>
+<%= if false do %>
   <.live_component
-    id={"calendar-active-event-#{id}"}
-    module={SchudeluWeb.CalendarLive.ActiveEventComponent}
-    event={Map.put(event, :id, id)}
+    id={"calendar-timeline-#{@calendar.id}"}
+    module={SchudeluWeb.CalendarLive.TimelineComponent}
+    calendar={@calendar}
+    calendar_state={@calendar_state}
     debug_mode={@debug_mode}
   />
-  <% end %>
-</div>
 
+  <div class="schudelu-events-summary">
+    <%= for {id, %{state: state} = event} when state != :idle <- Map.get(@calendar_state, :events, %{}) do %>
+    <.live_component
+      id={"calendar-active-event-#{id}"}
+      module={SchudeluWeb.CalendarLive.ActiveEventComponent}
+      event={Map.put(event, :id, id)}
+      debug_mode={@debug_mode}
+    />
+    <% end %>
+  </div>
+<% end %>
 <%= if @debug_mode do %>
 <h2> Debug mode enabled </h2>
 <pre><code><%= inspect(@calendar_state, pretty: true)%></code></pre>

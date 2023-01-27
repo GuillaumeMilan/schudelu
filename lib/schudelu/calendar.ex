@@ -8,6 +8,13 @@ defmodule Schudelu.Calendar do
     DynamicSupervisor.start_child(Schudelu.Calendar.Server.Sup, {Schudelu.Calendar.Server, name})
   end
 
+  def stop(name) do
+    case Schudelu.Calendar.Server.process_id(name) do
+      {:ok, pid} -> DynamicSupervisor.terminate_child(Schudelu.Calendar.Server.Sup, pid)
+      _ -> :not_alive
+    end
+  end
+
   def schedule(calendar, event) do
     call(calendar, {:schedule, event})
   end
@@ -24,8 +31,8 @@ defmodule Schudelu.Calendar do
     call(calendar, {:add_entry_point, event_id})
   end
 
-  def start_events(calendar, events_ids) do
-    call(calendar, {:start_events, events_ids})
+  def start_events(calendar) do
+    call(calendar, :start)
   end
 
   def finish_event(calendar, event_id) do
@@ -45,11 +52,11 @@ defmodule Schudelu.Calendar do
   end
 
   def call(calendar, msg) do
-    GenServer.call(Schudelu.Calendar.Server.process_id(calendar), msg)
+    GenServer.call(Schudelu.Calendar.Server.process_id!(calendar), msg)
   end
 
   def do_send(calendar, msg) do
-    Process.send(Schudelu.Calendar.Server.process_id(calendar), msg, [])
+    Process.send(Schudelu.Calendar.Server.process_id!(calendar), msg, [])
   end
 
   def list do

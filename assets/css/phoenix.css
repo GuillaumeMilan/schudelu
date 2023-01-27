@@ -24,7 +24,7 @@ pre{padding: 1em;}
   width: 100%
 }
 select {
-  width: auto;
+  width: 100%;
 }
 
 /* Phoenix promo and logo */

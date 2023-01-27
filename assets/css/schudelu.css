@@ -1,4 +1,3 @@
-
 .schudelu-events-summary {
   display: flex;
   flex-direction: row;
@@ -18,4 +17,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.schudelu-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.schudelu-space-between {
+  justify-content: space-between;
 }
