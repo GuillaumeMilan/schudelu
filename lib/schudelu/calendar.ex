@@ -27,12 +27,20 @@ defmodule Schudelu.Calendar do
     call(calendar, :events)
   end
 
-  def entry_point(calendar, event_id) do
-    call(calendar, {:add_entry_point, event_id})
+  def start_events(calendar, events_ids) do
+    call(calendar, {:start_events, events_ids})
   end
 
-  def start_events(calendar) do
-    call(calendar, :start)
+  def cancel_all_events(calendar) do
+    call(calendar, :cancel_all_events)
+  end
+
+  def reload(calendar) do
+    call(calendar, :reload)
+  end
+
+  def debug(calendar) do
+    call(calendar, :debug)
   end
 
   def finish_event(calendar, event_id) do

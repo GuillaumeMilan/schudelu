@@ -24,8 +24,6 @@ defmodule SchudeluWeb.EventLive.FormComponent do
   end
 
   def handle_event("save", %{"event" => event_params}, socket) do
-    require Logger
-    Logger.debug("PArams #{inspect event_params}")
     save_event(socket, socket.assigns.action, event_params)
   end
 

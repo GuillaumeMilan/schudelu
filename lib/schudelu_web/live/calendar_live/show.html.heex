@@ -1,3 +1,4 @@
+
 <div class="schudelu-row schudelu-space-between">
   <h1>Calendar: <%= @calendar.name %></h1>
   <span><%= live_redirect "Edit", to: Routes.calendar_edit_path(@socket, :index, @calendar), class: "button" %></span>
@@ -5,13 +6,15 @@
 
 
 <h2>Actions</h2>
-
 <span>
-  <%= case Map.get(@calendar_state, :state, :undefined) do %>
+  <button phx-click="reload-calendar">Reload</button>
+</span>
+<span>
+  <%= case global_state(@calendar_state) do %>
     <% :active -> %>
-      <button phx-click="cancel-calender">Cancel</button>
+      <button phx-click="cancel-calendar">Cancel</button>
     <% :stopped -> %>
-      <button phx-click="start-calender">Start</button>
+      <button phx-click="start-calendar">Start</button>
     <% _ -> %>
   <% end %>
 </span>
@@ -31,33 +34,17 @@
   </tbody>
 </table>
 
-<%= if @live_action in [:edit] do %>
-  <.modal return_to={Routes.calendar_show_path(@socket, :show, @calendar)}>
-    <.live_component
-      module={SchudeluWeb.CalendarLive.FormComponent}
-      id={@calendar.id}
-      title={@page_title}
-      action={@live_action}
-      calendar={@calendar}
-      return_to={Routes.calendar_show_path(@socket, :show, @calendar)}
-    />
-  </.modal>
-<% end %>
-
-<%= if @live_action in [:add_event] do %>
-  <.modal return_to={Routes.calendar_show_path(@socket, :show, @calendar)}>
-    <.live_component
-      module={SchudeluWeb.CalendarLive.AddEventComponent}
-      id={@calendar.id}
-      title={@page_title}
-      action={@live_action}
-      calendar={@calendar}
-      return_to={Routes.calendar_show_path(@socket, :show, @calendar)}
-    />
-  </.modal>
-<% end %>
-
 <h2>Events</h2>
+<%= for {event_id, %{state: state} = event} when state != :idle <- Map.get(@calendar_state, :events, %{}) do %>
+  <.live_component
+    id={"calendar-event-#{event_id}"}
+    module={SchudeluWeb.EventLive.SummaryComponent}
+    event={event}
+    calendar={@calendar}
+    debug_mode={@debug_mode}
+  />
+<% end %>
+
 <%= if false do %>
   <.live_component
     id={"calendar-timeline-#{@calendar.id}"}
@@ -79,6 +66,17 @@
   </div>
 <% end %>
 <%= if @debug_mode do %>
+<div class="schudelu-row schudelu-space-between">
+  <%= if @id in Map.keys(@calendar_state.subscribed) do %>
+    <div class="schudelu-message success">
+      Subscribed to calendar as <%= @id %>
+    </div>
+  <% else %>
+    <div class="schudelu-message error">
+      Not subscribed to calendar as <%= @id %>
+    </div>
+  <% end %>
+</div>
 <h2> Debug mode enabled </h2>
 <pre><code><%= inspect(@calendar_state, pretty: true)%></code></pre>
 <% end %>

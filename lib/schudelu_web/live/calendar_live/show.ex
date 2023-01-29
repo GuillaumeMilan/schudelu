@@ -22,6 +22,7 @@ defmodule SchudeluWeb.CalendarLive.Show do
     {
       :noreply,
       socket
+      |> assign(:id, socket.id)
       |> assign(:page_title, page_title(socket.assigns.live_action))
       |> assign(:calendar, calendar)
       |> ensure_assign(:calendar_state, %{})
@@ -32,7 +33,16 @@ defmodule SchudeluWeb.CalendarLive.Show do
 
   @impl true
   def handle_event("start-calendar", _params, socket) do
-    Schudelu.Calendar.start_events(socket.calendar.id, socket.calendar_state.entry_points)
+    entry_points = socket.assigns.calendar_state.events |> Enum.filter(fn {_, %{event: event}} -> event.is_entry_point end) |> Enum.map(fn {id, _} -> id end)
+    Schudelu.Calendar.start_events(socket.assigns.calendar.id, entry_points)
+    {:noreply, socket}
+  end
+  def handle_event("cancel-calendar", _params, socket) do
+    Schudelu.Calendar.cancel_all_events(socket.assigns.calendar.id)
+    {:noreply, socket}
+  end
+  def handle_event("reload-calendar", _params, socket) do
+    Schudelu.Calendar.reload(socket.assigns.calendar.id)
     {:noreply, socket}
   end
   def handle_event("click-debug-toggle", _params, socket) do
@@ -68,6 +78,8 @@ defmodule SchudeluWeb.CalendarLive.Show do
     Logger.warn(msg)
     {:noreply, socket}
   end
+
+  @impl true
   def handle_info({:new_state, %{name: calendar_name} = new_state}, socket) do
     require Logger
     Logger.debug("Socket received message from calendar #{inspect calendar_name}")# with new calendar state: \n#{inspect new_state, pretty: true}")
@@ -99,5 +111,12 @@ defmodule SchudeluWeb.CalendarLive.Show do
       key,
       Map.get(socket.assigns, key, default_value)
     )
+  end
+
+  def global_state(calendar_state) do
+    cond do
+      Enum.all?(Map.get(calendar_state, :events, %{}), fn {_, %{state: state}} -> state == :idle end) -> :stopped
+      true -> :active
+    end
   end
 end

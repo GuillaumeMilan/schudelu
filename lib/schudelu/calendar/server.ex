@@ -30,9 +30,7 @@ defmodule Schudelu.Calendar.Server do
   end
 
   def handle_continue(:load, state) do #TODO
-    calendar = Tools.get_calendar!(state.name)
-    events = Tools.list_event_in_calendar(calendar.id) |> Enum.map(fn e -> Repo.preload(e, [:from_event_vertex]) end) |> Map.new(&({&1.id, %{state: :idle, event: &1}}))
-    {:noreply, %{state|events: events, calendar: calendar}}
+    {:noreply, do_load(state)}
   end
 
   def terminate(reason, state) do
@@ -62,9 +60,6 @@ defmodule Schudelu.Calendar.Server do
         {:stop, reason, new_state}
     end
   end
-  def calendar_call(:start, _from, state) do
-    {:reply, :ok, do_start(state)}
-  end
   #def calendar_call({:add_entry_point, event_id}, _from, state) do
   #  case Map.has_key?(state.events, event_id) do
   #    true -> {:reply, :ok, %{state| entry_points: Enum.uniq([event_id|state.entry_points])}}
@@ -78,9 +73,20 @@ defmodule Schudelu.Calendar.Server do
   #def calendar_call(:events, _from, state) do
   #  {:reply, state.events, state}
   #end
-  #def calendar_call({:start_events,events_ids}, _from, state) do
-  #  {:reply, :ok, do_start(state, events_ids)}
-  #end
+  def calendar_call({:start_events,events_ids}, _from, state) do
+    {:reply, :ok, do_start(state, events_ids)}
+  end
+  def calendar_call(:cancel_all_events, _from, state) do
+    {:reply, :ok, do_cancel_all_events(state)}
+  end
+  def calendar_call(:reload, _from, state) do
+    state = (
+      state
+      |> do_cancel_all_events()
+      |> do_load()
+    )
+    {:reply, :ok, state}
+  end
   #def calendar_call({:edit, event_id, new_event}, _from, %{events: events} = state) do
   #  case events do
   #    %{^event_id => event} ->
@@ -175,10 +181,9 @@ defmodule Schudelu.Calendar.Server do
     principal_entry_points
   end
 
-  def do_start(state) do
-    entry_points = state.events |> Enum.filter(fn {_, %{event: event}} -> event.is_entry_point end) |> Enum.map(fn {id, _} -> id end)
+  def do_start(state, event_ids) do
     state
-    |> Map.update!(:events, fn events -> Map.new(events, fn {event_id, event} -> {event_id, may_start_event(event_id, event, state, entry_points)} end) end)
+    |> Map.update!(:events, fn events -> Map.new(events, fn {event_id, event} -> {event_id, may_start_event(event_id, event, state, event_ids)} end) end)
     |> Map.put(:state, :active)
   end
 
@@ -188,6 +193,19 @@ defmodule Schudelu.Calendar.Server do
     else
       event
     end
+  end
+
+  def do_cancel_all_events(state) do
+    %{
+      state|
+      events: Map.new(state.events, fn {event_id, event} -> {event_id, cancel_event(event_id, event)} end)
+    }
+  end
+
+  def do_load(state) do
+    calendar = Tools.get_calendar!(state.name)
+    events = Tools.list_event_in_calendar(calendar.id) |> Enum.map(fn e -> Repo.preload(e, [:from_event_vertex]) end) |> Map.new(&({&1.id, %{state: :idle, event: &1}}))
+    %{state|events: events, calendar: calendar}
   end
 
   # Hanlde start on delay events

@@ -1,0 +1,9 @@
+<div class="schudelu-row schudelu-space-between">
+  <h3><%= @event.event.name %></h3>
+
+  <div>
+    <%= actions(%{event: @event, myself: @myself}) %>
+    <span><button phx-click="finish-event" phx-target={@myself}>Done</button></span>
+    <span><button phx-click="cancel-event" phx-target={@myself}>Cancel</button></span>
+  </div>
+</div>

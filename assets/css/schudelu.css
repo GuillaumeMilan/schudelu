@@ -1,3 +1,4 @@
+/* Temp theme https://coolors.co/ef5424-0069d9-ffc857-5dd39e-9caea9 */
 .schudelu-events-summary {
   display: flex;
   flex-direction: row;
@@ -26,4 +27,32 @@
 
 .schudelu-space-between {
   justify-content: space-between;
+}
+
+.schudelu-message {
+    border: 0.1rem solid;
+    border-radius: .4rem;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    height: 3.8rem;
+    letter-spacing: .1rem;
+    line-height: 3.8rem;
+    padding: 0 3.0rem;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.schudelu-message.success {
+  background-color: #5dd39e;
+  border-color: #5dd39e;
+}
+
+.schudelu-message.error {
+  background-color: #ef5424;
+  border-color: #ef5424;
 }
