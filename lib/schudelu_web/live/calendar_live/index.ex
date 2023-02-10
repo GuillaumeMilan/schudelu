@@ -3,9 +3,11 @@ defmodule SchudeluWeb.CalendarLive.Index do
 
   alias Schudelu.Tools
   alias Schudelu.Tools.Calendar
+  alias Schudelu.PubSub
 
   @impl true
   def mount(_params, _session, socket) do
+    PubSub.subscribe(PubSub.calendars_topic(:public))
     {:ok, assign(socket, :calendar_collection, list_calendar())}
   end
 
@@ -31,6 +33,10 @@ defmodule SchudeluWeb.CalendarLive.Index do
     calendar = Tools.get_calendar!(id)
     {:ok, _} = Tools.delete_calendar(calendar)
 
+    {:noreply, socket}
+  end
+
+  def handle_info({:calendar, _, _}, socket) do
     {:noreply, assign(socket, :calendar_collection, list_calendar())}
   end
 

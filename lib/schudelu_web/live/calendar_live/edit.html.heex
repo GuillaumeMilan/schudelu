@@ -1,5 +1,5 @@
 <div class="schudelu-row schudelu-space-between">
-  <h1>Calendar <%= @calendar.name %></h1>
+  <h1><%= @calendar.name %></h1>
   <span><%= live_redirect "Show", to: Routes.calendar_show_path(@socket, :show, @calendar), class: "button" %></span>
 </div>
 

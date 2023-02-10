@@ -5,6 +5,7 @@ defmodule Schudelu.Tools do
 
   import Ecto.Query, warn: false
   alias Schudelu.Repo
+  alias Schudelu.PubSub
 
   alias Schudelu.Tools.Calendar
 
@@ -53,6 +54,12 @@ defmodule Schudelu.Tools do
     %Calendar{}
     |> Calendar.changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, calendar} ->
+        PubSub.broadcast({:calendar, :new}, calendar)
+        {:ok, calendar}
+      e -> e
+    end
   end
 
   @doc """
@@ -71,6 +78,12 @@ defmodule Schudelu.Tools do
     calendar
     |> Calendar.changeset(attrs)
     |> Repo.update()
+    |> case do
+      {:ok, calendar} ->
+        PubSub.broadcast({:calendar, :update}, calendar)
+        {:ok, calendar}
+      e -> e
+    end
   end
 
   @doc """
@@ -87,6 +100,12 @@ defmodule Schudelu.Tools do
   """
   def delete_calendar(%Calendar{} = calendar) do
     Repo.delete(calendar)
+    |> case do
+      {:ok, calendar} ->
+        PubSub.broadcast({:calendar, :delete}, calendar)
+        {:ok, calendar}
+      e -> e
+    end
   end
 
   @doc """
@@ -163,6 +182,12 @@ defmodule Schudelu.Tools do
     %Event{}
     |> Event.changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, event} ->
+        PubSub.broadcast({:event, :create}, event)
+        {:ok, event}
+      e -> e
+    end
   end
 
   @doc """
@@ -181,6 +206,12 @@ defmodule Schudelu.Tools do
     event
     |> Event.changeset(attrs)
     |> Repo.update()
+    |> case do
+      {:ok, event} ->
+        PubSub.broadcast({:event, :update}, event)
+        {:ok, event}
+      e -> e
+    end
   end
 
   @doc """
@@ -197,6 +228,12 @@ defmodule Schudelu.Tools do
   """
   def delete_event(%Event{} = event) do
     Repo.delete(event)
+    |> case do
+      {:ok, event} ->
+        PubSub.broadcast({:event, :delete}, event)
+        {:ok, event}
+      e -> e
+    end
   end
 
   @doc """
@@ -264,6 +301,12 @@ defmodule Schudelu.Tools do
     %EventVertex{}
     |> EventVertex.changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, event_vertex} ->
+        PubSub.broadcast({:event_vertex, :create}, event_vertex)
+        {:ok, event_vertex}
+      e -> e
+    end
   end
 
   @doc """
@@ -282,6 +325,12 @@ defmodule Schudelu.Tools do
     event_vertex
     |> EventVertex.changeset(attrs)
     |> Repo.update()
+    |> case do
+      {:ok, event_vertex} ->
+        PubSub.broadcast({:event_vertex, :update}, event_vertex)
+        {:ok, event_vertex}
+      e -> e
+    end
   end
 
   @doc """
@@ -298,6 +347,12 @@ defmodule Schudelu.Tools do
   """
   def delete_event_vertex(%EventVertex{} = event_vertex) do
     Repo.delete(event_vertex)
+    |> case do
+      {:ok, event_vertex} ->
+        PubSub.broadcast({:event_vertex, :delete}, event_vertex)
+        {:ok, event_vertex}
+      e -> e
+    end
   end
 
   @doc """

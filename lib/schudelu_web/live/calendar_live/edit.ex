@@ -1,19 +1,23 @@
 defmodule SchudeluWeb.CalendarLive.Edit do
   use SchudeluWeb, :live_view
 
+  alias Schudelu.PubSub
+  alias Schudelu.Tools.EventVertex
   alias Schudelu.Tools
   alias Schudelu.Tools.Calendar
   alias Schudelu.Tools.Event
   alias Schudelu.Tools.EventVertex
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(%{"id" => id}, _session, socket) do
+    PubSub.subscribe(PubSub.calendar_topic(id))
     {:ok, socket}
   end
 
   @impl true
   def handle_params(%{"id" => id} = params, _url, socket) do
-
+    require Logger
+    Logger.debug("12093uyik Handle params")
     events = list_events(id)
     event_vertices = list_event_vertices(events)
     {
@@ -54,12 +58,9 @@ defmodule SchudeluWeb.CalendarLive.Edit do
     Tools.get_event!(id)
     |> Tools.delete_event()
 
-    events = list_events(socket.assigns.calendar.id)
     {
       :noreply,
       socket
-      |> assign(:events, events)
-      |> assign(:event_vertices, list_event_vertices(events))
     }
   end
   def handle_event("delete_event_vertex", %{"id" => id}, socket) do
@@ -69,15 +70,43 @@ defmodule SchudeluWeb.CalendarLive.Edit do
     {
       :noreply,
       socket
-      |> assign(:event_vertices, list_event_vertices(socket.assigns.events))
+    }
+  end
+
+  #TODO redirect to the calendar list page when the calendar is being deleted
+  def handle_info({:calendar, event, calendar}, socket) when event != :delete do
+    {
+      :noreply,
+      socket
+      |> assign(:calendar, calendar)
+    }
+  end
+  def handle_info({:event, _, _} = event, socket) do
+    require Logger
+    Logger.debug("1273801idjhjqwdba #{inspect event}")
+    events = list_events(socket.assigns.calendar.id)
+    {
+      :noreply,
+      socket
+      |> assign(:events, events)
+    }
+  end
+  def handle_info({:event_vertex, _, _}, socket) do
+    events = list_events(socket.assigns.calendar.id)
+    event_vertices = list_event_vertices(events)
+    {
+      :noreply,
+      socket
+      |> assign(:events, events)
+      |> assign(:event_vertices, event_vertices)
     }
   end
 
   def list_events(calendar_id) do
-    Tools.list_event_in_calendar(calendar_id) |> Map.new(fn event -> {event.id, event} end)
+    Tools.list_event_in_calendar(calendar_id) |> Schudelu.Repo.preload([:from_event_vertex]) |> Map.new(fn event -> {event.id, event} end)
   end
 
   def list_event_vertices(events) do
-    events |> Map.keys() |> Enum.flat_map(&Tools.list_event_vertex_referencing/1) |> Enum.uniq()
+    events |> Map.values() |> Enum.flat_map(fn %{from_event_vertex: from_event_vertex} -> from_event_vertex end)
   end
 end
