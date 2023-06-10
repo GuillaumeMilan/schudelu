@@ -52,4 +52,39 @@ defmodule SchudeluWeb.EventLive.FormComponent do
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
+
+  def event_args(%{source: changeset} = html_form) do
+    _event_args(Ecto.Changeset.get_field(changeset, :type), html_form)
+  end
+
+  def _event_args(:delay, f) do
+    #(Schudelu.Tools.Event.DelayArgs.changeset(%Schudelu.Tools.Event.DelayArgs{}, args) |> Schudelu.Tools.Event.DelayArgs.changeset(%{delay: 3})).params
+    # TODO Create the changeset from this and then ...
+    assigns = %{}
+    ~H"""
+    <%= label f, :args, "Count down" %>
+    <%= for fa <- inputs_for(f, :args) do %>
+      <%= text_input fa, :delay_value, autocomplete: false, type: _delay_args_input_type(fa)%>
+      <%= select fa, :delay_unit, ["Seconds": :second, "Minutes": :minute] %>
+    <% end %>
+    <%= error_tag f, :args%>
+    """
+  end
+  def _event_args(:manual, _) do
+    assigns = %{}
+    ~H"""
+    """
+  end
+
+
+  def _delay_args_input_type(form) do
+    require Logger
+    Logger.debug("_delay_args_form #{inspect form}")
+    Logger.debug("_delay_args_form_value #{inspect Phoenix.HTML.Form.input_value(form, :delay_unit)}")
+    case "#{Phoenix.HTML.Form.input_value(form, :delay_unit)}" do
+      "second" -> "number"
+      "minute" -> "number"
+    end
+  end
+
 end

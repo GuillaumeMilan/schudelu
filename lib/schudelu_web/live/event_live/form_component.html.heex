@@ -13,9 +13,11 @@
     <%= text_input f, :name, autocomplete: false %>
     <%= error_tag f, :name %>
 
-    <%= label f, :type %>
+    <%= label f, :type , default: :delay%>
     <%= select f, :type, ["Count down": :delay, "Manual": :manual] %>
     <%= error_tag f, :type %>
+
+    <%= event_args(f) %>
 
     <div>
       <%= submit "Save", phx_disable_with: "Saving..." %>
