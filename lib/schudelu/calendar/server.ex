@@ -11,7 +11,6 @@ defmodule Schudelu.Calendar.Server do
   use GenServer
   alias Schudelu.Tools
   alias Schudelu.Repo
-  alias Schudelu.Tools.Event
 
   def child_spec(name) do
     %{

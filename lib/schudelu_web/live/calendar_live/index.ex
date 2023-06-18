@@ -36,6 +36,7 @@ defmodule SchudeluWeb.CalendarLive.Index do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info({:calendar, _, _}, socket) do
     {:noreply, assign(socket, :calendar_collection, list_calendar())}
   end

@@ -4,7 +4,6 @@ defmodule SchudeluWeb.CalendarLive.Edit do
   alias Schudelu.PubSub
   alias Schudelu.Tools.EventVertex
   alias Schudelu.Tools
-  alias Schudelu.Tools.Calendar
   alias Schudelu.Tools.Event
   alias Schudelu.Tools.EventVertex
 
@@ -16,8 +15,6 @@ defmodule SchudeluWeb.CalendarLive.Edit do
 
   @impl true
   def handle_params(%{"id" => id} = params, _url, socket) do
-    require Logger
-    Logger.debug("12093uyik Handle params")
     events = list_events(id)
     event_vertices = list_event_vertices(events)
     {
@@ -74,6 +71,7 @@ defmodule SchudeluWeb.CalendarLive.Edit do
   end
 
   #TODO redirect to the calendar list page when the calendar is being deleted
+  @impl true
   def handle_info({:calendar, event, calendar}, socket) when event != :delete do
     {
       :noreply,

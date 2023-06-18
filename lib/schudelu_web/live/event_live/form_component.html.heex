@@ -17,6 +17,10 @@
     <%= select f, :type, ["Count down": :delay, "Manual": :manual] %>
     <%= error_tag f, :type %>
 
+    <%= label f, :is_entry_point, default: false %>
+    <%= checkbox f, :is_entry_point %>
+    <%= error_tag f, :is_entry_point %>
+
     <%= event_args(f) %>
 
     <div>

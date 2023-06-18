@@ -78,13 +78,16 @@ defmodule SchudeluWeb.EventLive.FormComponent do
 
 
   def _delay_args_input_type(form) do
-    require Logger
-    Logger.debug("_delay_args_form #{inspect form}")
-    Logger.debug("_delay_args_form_value #{inspect Phoenix.HTML.Form.input_value(form, :delay_unit)}")
     case "#{Phoenix.HTML.Form.input_value(form, :delay_unit)}" do
       "second" -> "number"
       "minute" -> "number"
     end
   end
 
+  def my_fun(attributes) do
+    assigns = %{inspect: inspect(attributes)}
+    ~H"""
+    <%= @inspect %>
+    """
+  end
 end
