@@ -209,7 +209,7 @@ defmodule Schudelu.Calendar.Server do
 
   # Hanlde start on delay events
   def start_event(event_id, %{event: %{type: :delay, args: args}, state: :idle} = event) do
-    delay = Map.get(args || %{}, "delay", 30_000) #TODO This is a shit before implementing events arguments
+    delay = get_delay(args)
     require Logger
     Logger.debug("[#{inspect __MODULE__}] Starting event #{inspect event_id} also named: #{inspect event.event.name}")
     timer_ref = Process.send_after(self(), {:event_finished, event_id}, delay)
@@ -334,5 +334,15 @@ defmodule Schudelu.Calendar.Server do
   def to_subscribers(message, subscribers) do
     subscribers
     |> Enum.each(fn {_name, pid} -> send(pid, message) end)
+  end
+
+  def get_delay(%Tools.Event.Args{delay_value: value, delay_unit: :second}) do
+    :timer.seconds(value)
+  end
+  def get_delay(%Tools.Event.Args{delay_value: value, delay_unit: :minute}) do
+    :timer.minutes(value)
+  end
+  def get_delay(_) do # Fallback to 30 seconds
+    :timer.seconds(30)
   end
 end
