@@ -3,7 +3,8 @@ import Config
  config :schudelu, Schudelu.Repo,
   username: "postgres",
   password: "postgres",
-  hostname: "db",
+  hostname: "localhost",
+  port: 25432,
   database: "schudelu_core",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
@@ -25,7 +26,8 @@ config :schudelu, SchudeluWeb.Endpoint,
   secret_key_base: "etFNZzCqkU8EWSBBUgl7isPSaQvPeQvEeZFri++l3CENSfzAWxZr1E4vHtdrUIX0",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 
 # ## SSL Support

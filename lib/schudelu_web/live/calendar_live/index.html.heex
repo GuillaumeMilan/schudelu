@@ -1,4 +1,4 @@
-<h1>Listing Calendar</h1>
+<h1 class="text-3xl font-bold underline">Listing Calendar</h1>
 
 <%= if @live_action in [:new, :edit] do %>
   <.modal return_to={Routes.calendar_index_path(@socket, :index)}>
