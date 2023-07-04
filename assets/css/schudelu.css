@@ -3,6 +3,9 @@
 html, body {
   font-family: 'Montserrat', sans-serif;
 }
+
+/* Relicat to delete */
+
 .schudelu-events-summary {
   display: flex;
   flex-direction: row;

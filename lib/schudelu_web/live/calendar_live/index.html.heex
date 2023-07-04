@@ -1,4 +1,8 @@
-<h1 class="text-3xl font-bold underline">Listing Calendar</h1>
+<div class="flex justify-between align-center mb-8">
+<div class="h-6 w-6 cursor-pointer rounded-md"><SchudeluWeb.SvgIconsView.icon name="chevron-left"/></div>
+<h1 class="text-center text-lg ">Your workouts</h1>
+<div class="h-6 w-6 cursor-pointer rounded-md"><SchudeluWeb.SvgIconsView.icon name="more-horizontal"/></div>
+</div>
 
 <%= if @live_action in [:new, :edit] do %>
   <.modal return_to={Routes.calendar_index_path(@socket, :index)}>
@@ -13,27 +17,25 @@
   </.modal>
 <% end %>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
+<div class="mb-8">
+<%= live_patch to: Routes.calendar_index_path(@socket, :new) do %>
+  <.main_cta
+    title="Create workout"
+    subtitle="Create your own personalized workout 🔥"
+    icon_name="activity"
+    to={Routes.calendar_index_path(@socket, :new)}
+  />
+<% end %>
+</div>
+<div class="border-t-2 border-gray-dark mb-4"/>
 
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="calendar">
-    <%= for calendar <- @calendar_collection do %>
-      <tr id={"calendar-#{calendar.id}"}>
-        <td><%= calendar.name %></td>
-
-        <td>
-          <span><%= live_redirect "Show", to: Routes.calendar_show_path(@socket, :show, calendar) %></span>
-          <span><%= live_redirect "Edit", to: Routes.calendar_edit_path(@socket, :index, calendar) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: calendar.id, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<span><%= live_patch "New Calendar", to: Routes.calendar_index_path(@socket, :new) %></span>
+<div>
+  <%= for calendar <- @calendar_collection do %>
+    <.thumb>
+      <:title><%= calendar.name %></:title>
+      <:cta>
+        <%= live_redirect "Start", to: Routes.calendar_show_path(@socket, :show, calendar) %>
+      </:cta>
+    </.thumb>
+  <% end %>
+</div>

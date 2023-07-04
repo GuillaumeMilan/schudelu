@@ -1,9 +1,13 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* This file is for your main application CSS */
 @import "./schudelu.css";
+
+button {
+  @apply bg-blue-light rounded-2xl px-2 py-1 text-black;
+}
 
 /* Alerts and form errors used by phx.new */
 .alert {

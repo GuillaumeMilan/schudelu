@@ -17,12 +17,17 @@ module.exports = {
       'white': '#fefefe',
       'gray-dark': '#1b2121',
       'gray': '#282c2d',
+      'gray-blue': "#373b3c",
       'gray-light': '#8c8e8d',
-      'light-blue': '#d7f2f4',
-      'light-red': '#f4d7e1',
+      'blue-light': '#d7f2f4',
+      'red-light': '#f4d7e1',
       'gold': '#f3be1a'
     },
-    extend: {},
+    extend: {
+      boxShadow: {
+        'solid-3xl': '0 1rem 0 -0.5rem',
+      }
+    },
   },
   plugins: [
     require('@tailwindcss/forms'),

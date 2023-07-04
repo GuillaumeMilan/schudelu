@@ -9,21 +9,18 @@
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
-  <body>
-    <menu>
-      <nav>
-        <ul>
-          <li><%= link "Calendars", to: Routes.calendar_index_path(@conn, :index) %></li>
-          <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-            <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
-          <% end %>
-        </ul>
-      </nav>
-    </menu>
-    <page>
+  <body class="bg-black text-white p-4 pt-8 h-screen w-screen">
+    <main>
     <%= @inner_content %>
-    </page>
-    <footer>
+    </main>
+    <footer class="absolute bottom-0 left-0 right-0 h-12 w-screen px-4">
+      <ol class="w-full h-full border-t-2 border-gray-dark flex justify-around pt-4">
+        <li class="h-4 w-4"><%= link to: Routes.calendar_index_path(@conn, :index) do %><SchudeluWeb.SvgIconsView.icon name="home" /><% end %></li>
+        <li class="h-4 w-4"><%= link to: Routes.calendar_index_path(@conn, :index) do %><SchudeluWeb.SvgIconsView.icon name="user" /><% end %></li><% #TODO redirect to the current active calendar %>
+        <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+        <li class="h-4 w-4"><%= link to: Routes.live_dashboard_path(@conn, :home) do %><SchudeluWeb.SvgIconsView.icon name="layout" /><% end %></li><% #TODO redirect to the current active calendar %>
+        <% end %>
+      </ol>
     </footer>
   </body>
 </html>

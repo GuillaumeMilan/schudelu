@@ -52,6 +52,41 @@ defmodule SchudeluWeb.LiveHelpers do
     """
   end
 
+  def main_cta(assigns) do
+    ~H"""
+    <div class="bg-gray p-4 rounded-2xl shadow-solid-3xl shadow-gray-dark">
+      <div class="flex justify-between items-center">
+        <div class="bg-black h-12 w-12 rounded-full p-1 mr-4">
+          <SchudeluWeb.SvgIconsView.icon name={@icon_name} />
+        </div>
+        <div>
+          <div class="text-gray-light text-xs"><%= @subtitle %></div>
+          <div class="text-xl"><%= @title %></div>
+        </div>
+        <div class="bg-gray-blue h-8 w-8 rounded-lg p-1">
+          <SchudeluWeb.SvgIconsView.icon name="chevrons-right" />
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  def thumb(assigns) do
+    require Logger
+    ~H"""
+    <div class="bg-gray p-4 rounded-2xl">
+      <div class="mb-4">
+        <div class="text-2xl"><%= render_slot(@title) %></div>
+        <div class="text-2xl text-gray-light">Workout</div>
+      </div>
+      <div class="flex justify-between">
+        <button><%= render_slot(@cta) %></button>
+        <div class="italic text-gray-light"> Stats incomming...</div>
+      </div>
+    </div>
+    """
+  end
+
   defp hide_modal(js \\ %JS{}) do
     js
     |> JS.hide(to: "#modal", transition: "fade-out")
