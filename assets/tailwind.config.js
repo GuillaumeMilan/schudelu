@@ -28,6 +28,9 @@ module.exports = {
         'solid-3xl': '0 1rem 0 -0.5rem',
       }
     },
+    fontFamily: {
+      'sans': ['Montserrat', 'sans-serif'],
+    }
   },
   plugins: [
     require('@tailwindcss/forms'),
