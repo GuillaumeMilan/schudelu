@@ -1,6 +1,8 @@
 defmodule SchudeluWeb.CalendarLive.Index do
   use SchudeluWeb, :live_view
 
+  import SchudeluWeb.CoreComponents
+
   alias Schudelu.Tools
   alias Schudelu.Tools.Calendar
   alias Schudelu.PubSub

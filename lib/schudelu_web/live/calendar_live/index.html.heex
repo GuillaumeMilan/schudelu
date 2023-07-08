@@ -1,29 +1,12 @@
-<div class="flex justify-between align-center mb-8">
-<div class="h-6 w-6 cursor-pointer rounded-md"><SchudeluWeb.SvgIconsView.icon name="chevron-left"/></div>
-<h1 class="text-center text-lg ">Your workouts</h1>
-<div class="h-6 w-6 cursor-pointer rounded-md"><SchudeluWeb.SvgIconsView.icon name="more-horizontal"/></div>
-</div>
-
-<%= if @live_action in [:new, :edit] do %>
-  <.modal return_to={Routes.calendar_index_path(@socket, :index)}>
-    <.live_component
-      module={SchudeluWeb.CalendarLive.FormComponent}
-      id={@calendar.id || :new}
-      title={@page_title}
-      action={@live_action}
-      calendar={@calendar}
-      return_to={Routes.calendar_index_path(@socket, :index)}
-    />
-  </.modal>
-<% end %>
+<.header title="Your workouts"/>
 
 <div class="mb-8">
-<%= live_patch to: Routes.calendar_index_path(@socket, :new) do %>
+<%= live_redirect to: Routes.calendar_create_path(@socket, :new) do %>
   <.main_cta
     title="Create workout"
     subtitle="Create your own personalized workout 🔥"
     icon_name="activity"
-    to={Routes.calendar_index_path(@socket, :new)}
+    to={Routes.calendar_create_path(@socket, :new)}
   />
 <% end %>
 </div>

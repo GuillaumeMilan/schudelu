@@ -23,8 +23,8 @@ defmodule SchudeluWeb.Router do
     #live "/calendar-react-ionic/:calendar_id", Controllers.CalendarReactIonic
 
     live "/calendar", CalendarLive.Index, :index
-    live "/calendar/new", CalendarLive.Index, :new
 
+    live "/calendar/new", CalendarLive.Create, :new
     live "/calendar/:id/edit", CalendarLive.Edit, :index
     live "/calendar/:id/edit/add_event", CalendarLive.Edit, :add_event
     live "/calendar/:id/edit/edit_event/:event_id", CalendarLive.Edit, :edit_event

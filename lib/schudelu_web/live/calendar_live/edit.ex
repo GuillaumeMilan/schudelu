@@ -1,6 +1,8 @@
 defmodule SchudeluWeb.CalendarLive.Edit do
   use SchudeluWeb, :live_view
 
+  import SchudeluWeb.CoreComponents
+
   alias Schudelu.PubSub
   alias Schudelu.Tools.EventVertex
   alias Schudelu.Tools

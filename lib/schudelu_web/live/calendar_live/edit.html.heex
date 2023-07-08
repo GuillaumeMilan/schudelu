@@ -1,9 +1,10 @@
+<.header title={@calendar.name}/>
 <div class="schudelu-row schudelu-space-between">
-  <h1><%= @calendar.name %></h1>
+  <div/>
   <span><%= live_redirect "Show", to: Routes.calendar_show_path(@socket, :show, @calendar), class: "button" %></span>
 </div>
 
-<h2>Events</h2>
+<h2 class="text-2xl font-bold my-4">Events</h2>
 
 <%= if @live_action in [:add_event, :edit_event] do %>
   <.modal return_to={Routes.calendar_edit_path(@socket, :index, @calendar)}>
@@ -17,6 +18,17 @@
     />
   </.modal>
 <% end %>
+
+<div class="grid grid-cols-3 bg-">
+  <div class="">Name</div>
+  <div>Type</div>
+  <div></div>
+  <%= for {_, event} <-  @events do %>
+    <div><%= event.name %></div>
+    <div><%= event.type %></div>
+    <div> Actions inc </div>
+  <%end%>
+</div>
 
 <table>
   <thead>
@@ -41,10 +53,10 @@
 </table>
 <span><%= live_patch "New Event", to: Routes.calendar_edit_path(@socket, :add_event, @calendar) %></span>
 
-<hr/>
+<hr class="my-4 text-gray border-t-2"/>
 
 
-<h2>Events Links</h2>
+<h2 class="text-2xl font-bold my-4">Events Links</h2>
 
 <%= if @live_action in [:link_events] do %>
   <.modal return_to={Routes.calendar_edit_path(@socket, :index, @calendar)}>

@@ -72,9 +72,8 @@ defmodule SchudeluWeb.LiveHelpers do
   end
 
   def thumb(assigns) do
-    require Logger
     ~H"""
-    <div class="bg-gray p-4 rounded-2xl">
+    <div class="bg-gray p-4 rounded-2xl mb-4">
       <div class="mb-4">
         <div class="text-2xl"><%= render_slot(@title) %></div>
         <div class="text-2xl text-gray-light">Workout</div>
